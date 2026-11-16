@@ -1,0 +1,7 @@
+Executed against a disposable Spring Boot application and real PostgreSQL 14.15.
+Mode: --http-only (no container restart was simulated or claimed).
+PASS: service readiness
+PASS: delayed POS reconciliation and retry
+PASS: late old-visit isolation
+PASS: concurrent duplicates, key conflict and competing seating
+PASS: manual fixture changes pause guided mode

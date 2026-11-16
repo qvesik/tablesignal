@@ -1,0 +1,33 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: tablesignal
+      POSTGRES_USER: tablesignal
+      POSTGRES_PASSWORD: "${TABLESIGNAL_DB_PASSWORD:-local-demo-only}"
+    ports:
+      - "127.0.0.1:${TABLESIGNAL_DB_PORT:-5439}:5432"
+    volumes:
+      - tablesignal-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tablesignal -d tablesignal"]
+      interval: 3s
+      timeout: 3s
+      retries: 25
+
+  app:
+    build: .
+    ports:
+      - "127.0.0.1:${TABLESIGNAL_HTTP_PORT:-8080}:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+      TABLESIGNAL_BIND_ADDRESS: 0.0.0.0
+      TABLESIGNAL_DB_URL: jdbc:postgresql://db:5432/tablesignal
+      TABLESIGNAL_DB_USER: tablesignal
+      TABLESIGNAL_DB_PASSWORD: "${TABLESIGNAL_DB_PASSWORD:-local-demo-only}"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  tablesignal-data:

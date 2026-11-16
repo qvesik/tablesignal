@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#f7f7fb" />
+    <meta
+      name="description"
+      content="TableSignal — a clear view of your restaurant floor, visits and POS confirmations."
+    />
+    <title>TableSignal · Restaurant floor</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/style.css?v=0.3.1" />
+    <script src="/app.js?v=0.3.1" type="module"></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to workspace</a>
+    <aside class="sidebar" aria-label="Application navigation">
+      <a href="#floor" class="brand"
+        ><span class="brand-mark" aria-hidden="true">t<span></span></span
+        >TableSignal<span class="brand-dot">.</span></a
+      >
+      <div class="workspace-switch">
+        <span class="venue-avatar">AT</span>
+        <div><strong>Adriatic Table</strong><small>Durrës, Albania</small></div>
+      </div>
+      <p class="nav-caption">WORKSPACE</p>
+      <nav id="navigation">
+        <a href="#floor" data-view="floor"
+          ><span data-icon="floor"></span>Floor overview<span class="nav-count"
+            >12</span
+          ></a
+        >
+        <a href="#history" data-view="history"
+          ><span data-icon="history"></span>Visit history<span
+            id="history-count"
+            class="nav-count"
+            >0</span
+          ></a
+        >
+        <a href="#activity" data-view="activity"
+          ><span data-icon="activity"></span>Activity log</a
+        >
+        <a href="#studio" data-view="studio" id="studio-nav" hidden
+          ><span data-icon="beaker"></span>Demo studio<span class="nav-demo"
+            >LOCAL</span
+          ></a
+        >
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="local-notice">
+          <span class="local-symbol" data-icon="spark"></span
+          ><strong>Your local workspace</strong>
+          <p>Synthetic data. Real event handling.</p>
+          <button id="sample-service" class="text-button" hidden>
+            Load sample service <span aria-hidden="true">↗</span>
+          </button>
+        </div>
+        <button class="nav-utility" id="help">
+          <span data-icon="help"></span>Help & shortcuts<span class="key-hint"
+            >?</span
+          >
+        </button>
+        <button class="nav-utility" id="preferences">
+          <span data-icon="settings"></span>Preferences
+        </button>
+        <div class="operator">
+          <span class="operator-avatar">FM</span>
+          <div><strong>Floor manager</strong><small>Local operator</small></div>
+          <span class="operator-online" title="Local workspace"></span>
+        </div>
+      </div>
+    </aside>
+    <div class="workspace">
+      <header class="topbar">
+        <div class="breadcrumb">
+          <span class="mobile-logo">TableSignal.</span
+          ><span id="breadcrumb-label">Workspace / Floor overview</span>
+        </div>
+        <div class="topbar-right">
+          <span class="connection" id="connection" role="status"
+            ><i></i>Connecting</span
+          ><span class="top-divider"></span><span data-icon="calendar"></span
+          ><span id="today">—</span
+          ><button
+            class="icon-button"
+            id="refresh"
+            aria-label="Refresh workspace"
+            title="Refresh workspace"
+          >
+            <span data-icon="refresh"></span>
+          </button>
+        </div>
+      </header>
+      <main id="main" tabindex="-1">
+        <div id="problem" class="problem" role="alert" hidden>
+          <span data-icon="alert"></span>
+          <p id="problem-text"></p>
+          <button id="retry-load" class="text-button">Try again</button>
+        </div>
+        <section id="view-floor" class="view" aria-labelledby="floor-title">
+          <div class="page-heading">
+            <div>
+              <div class="eyebrow">
+                <span class="tiny-dot"></span> SERVICE WORKSPACE
+                <span class="eyebrow-separator">/</span>
+                <span id="service-date">LOCAL SERVICE</span>
+              </div>
+              <h1 id="floor-title">
+                A clear view of your floor<span class="purple-dot">.</span>
+              </h1>
+              <p>
+                Every table, every visit. The right information at a glance.
+              </p>
+            </div>
+            <button class="button primary" id="seat-top">
+              <span data-icon="plus"></span>Seat guests
+            </button>
+          </div>
+          <div class="metrics" aria-label="Current service summary">
+            <article class="metric">
+              <div>
+                <span class="metric-label">Occupied tables</span
+                ><strong
+                  ><span id="occupied">—</span><small>/ 12</small></strong
+                >
+                <p id="occupancy-caption">Across both areas</p>
+              </div>
+              <div class="occupancy-ring" id="occupancy-ring">
+                <span data-icon="floor"></span>
+              </div>
+            </article>
+            <article class="metric">
+              <div>
+                <span class="metric-label">Active alerts</span
+                ><strong id="alerts">—</strong>
+                <p id="alert-caption">Waiting for POS confirmation</p>
+              </div>
+              <span class="metric-icon amber" data-icon="alert"></span>
+            </article>
+            <article class="metric">
+              <div>
+                <span class="metric-label">Average first order</span
+                ><strong id="average">—</strong>
+                <p>Confirmed visits · event time</p>
+              </div>
+              <span class="metric-icon violet" data-icon="clock"></span>
+            </article>
+            <article class="metric">
+              <div>
+                <span class="metric-label">Guests seated</span
+                ><strong id="guests">—</strong>
+                <p>In currently open visits</p>
+              </div>
+              <span class="metric-icon green" data-icon="guests"></span>
+            </article>
+          </div>
+          <div class="floor-layout">
+            <section class="floor-panel panel" aria-labelledby="map-title">
+              <div class="panel-toolbar">
+                <div>
+                  <h2 id="map-title">Floor overview</h2>
+                  <p>
+                    <span id="available-count">—</span> tables available for
+                    seating
+                  </p>
+                </div>
+                <div class="segmented" aria-label="Floor layout">
+                  <button
+                    id="grid"
+                    aria-pressed="true"
+                    title="Map view"
+                    aria-label="Map view"
+                  >
+                    <span data-icon="floor"></span></button
+                  ><button
+                    id="list"
+                    aria-pressed="false"
+                    title="List view"
+                    aria-label="List view"
+                  >
+                    <span data-icon="list"></span>
+                  </button>
+                </div>
+              </div>
+              <div class="floor-filters">
+                <div
+                  class="area-tabs"
+                  id="area-tabs"
+                  role="group"
+                  aria-label="Filter floor area"
+                >
+                  <button data-area="all" aria-pressed="true">
+                    All areas<span>12</span></button
+                  ><button data-area="Dining room" aria-pressed="false">
+                    Dining room<span>8</span></button
+                  ><button data-area="Terrace" aria-pressed="false">
+                    Terrace<span>4</span>
+                  </button>
+                </div>
+                <label class="status-select"
+                  ><span class="sr-only">Filter table status</span
+                  ><select id="floor-filter">
+                    <option value="all">All statuses</option>
+                    <option value="Free">Available</option>
+                    <option value="Seated">Seated</option>
+                    <option value="Awaiting POS confirmation">
+                      Awaiting POS
+                    </option>
+                    <option value="Order confirmed">Order confirmed</option>
+                  </select></label
+                >
+              </div>
+              <div id="zones" class="zones" aria-label="Restaurant tables">
+                <div class="loading-state">
+                  <span class="loader"></span>Loading your floor…
+                </div>
+              </div>
+              <footer class="floor-legend">
+                <span class="legend-label">TABLE STATUS</span
+                ><span><i class="dot free"></i>Free</span
+                ><span><i class="dot seated"></i>Seated</span
+                ><span><i class="dot alert"></i>Awaiting POS</span
+                ><span><i class="dot confirmed"></i>Order confirmed</span>
+              </footer>
+            </section>
+            <aside
+              class="detail-panel panel"
+              aria-label="Selected table"
+              id="detail-panel"
+            >
+              <div id="visit">
+                <div class="loading-state">
+                  Select a table to view its visit.
+                </div>
+              </div>
+            </aside>
+          </div>
+          <div id="demo-strip" class="demo-strip" hidden>
+            <span class="demo-strip-icon" data-icon="beaker"></span>
+            <div>
+              <strong>See the story behind a delayed order</strong>
+              <p id="step-text">
+                Explore the guided POS scenario with a controllable clock.
+              </p>
+            </div>
+            <a href="#studio" class="button secondary small"
+              >Open demo studio<span data-icon="arrow"></span
+            ></a>
+          </div>
+        </section>
+        <section
+          id="view-history"
+          class="view"
+          aria-labelledby="history-title"
+          hidden
+        >
+          <div class="page-heading">
+            <div>
+              <div class="eyebrow">VISITS & RECORDS</div>
+              <h1 id="history-title">
+                Visit history<span class="purple-dot">.</span>
+              </h1>
+              <p>A complete record, from the first seat to the last order.</p>
+            </div>
+            <button class="button secondary" id="export-history">
+              <span data-icon="download"></span>Export CSV
+            </button>
+          </div>
+          <div class="panel history-panel">
+            <div class="collection-toolbar">
+              <div
+                class="area-tabs"
+                id="history-tabs"
+                role="group"
+                aria-label="Filter visits"
+              >
+                <button data-state="all" aria-pressed="true">All visits</button
+                ><button data-state="open" aria-pressed="false">Open</button
+                ><button data-state="closed" aria-pressed="false">
+                  Completed
+                </button>
+              </div>
+              <label class="search-field"
+                ><span data-icon="search"></span
+                ><input
+                  id="history-search"
+                  type="search"
+                  placeholder="Search table, visit or note"
+                  aria-label="Search visits" /></label
+              ><select id="history-sort" aria-label="Sort visits">
+                <option value="newest">Newest first</option>
+                <option value="oldest">Oldest first</option>
+              </select>
+            </div>
+            <div class="table-scroll">
+              <table class="records-table">
+                <thead>
+                  <tr>
+                    <th>Table / visit</th>
+                    <th>Party</th>
+                    <th>Seated</th>
+                    <th>First-order wait</th>
+                    <th>Closed</th>
+                    <th>Status</th>
+                    <th><span class="sr-only">Open visit</span></th>
+                  </tr>
+                </thead>
+                <tbody id="history-rows"></tbody>
+              </table>
+            </div>
+            <div id="history-cards" class="history-cards"></div>
+            <div id="history-empty" class="empty-state" hidden></div>
+            <footer class="collection-footer">
+              <span id="history-summary"></span>
+              <div>
+                <button
+                  id="history-prev"
+                  class="icon-button"
+                  aria-label="Previous page"
+                >
+                  <span data-icon="chevron-left"></span></button
+                ><span id="history-page"></span
+                ><button
+                  id="history-next"
+                  class="icon-button"
+                  aria-label="Next page"
+                >
+                  <span data-icon="chevron-right"></span>
+                </button>
+              </div>
+            </footer>
+          </div>
+        </section>
+        <section
+          id="view-activity"
+          class="view"
+          aria-labelledby="activity-title"
+          hidden
+        >
+          <div class="page-heading">
+            <div>
+              <div class="eyebrow">DURABLE EVENT JOURNAL</div>
+              <h1 id="activity-title">
+                The service, in sequence<span class="purple-dot">.</span>
+              </h1>
+              <p>
+                Accepted events with occurrence time, delivery time and source.
+              </p>
+            </div>
+            <button class="button secondary" id="reload-activity">
+              <span data-icon="refresh"></span>Refresh log
+            </button>
+          </div>
+          <div class="panel">
+            <div class="collection-toolbar">
+              <div
+                class="area-tabs"
+                id="activity-tabs"
+                role="group"
+                aria-label="Filter event source"
+              >
+                <button data-source="all" aria-pressed="true">
+                  All sources</button
+                ><button data-source="hostess" aria-pressed="false">
+                  Hostess</button
+                ><button data-source="pos" aria-pressed="false">POS</button>
+              </div>
+              <span class="muted"
+                >Most recent 100 accepted events · Europe/Tirane</span
+              >
+            </div>
+            <div id="activity-list" class="activity-list"></div>
+          </div>
+        </section>
+        <section
+          id="view-studio"
+          class="view"
+          aria-labelledby="studio-title"
+          hidden
+        >
+          <div class="page-heading">
+            <div>
+              <div class="eyebrow">
+                <span class="tiny-dot"></span> LOCAL DEMO ENVIRONMENT
+              </div>
+              <h1 id="studio-title">
+                A small delay. A clearer story<span class="purple-dot">.</span>
+              </h1>
+              <p>
+                Explore event time, delivery time and a floor that tells the
+                difference.
+              </p>
+            </div>
+            <div class="heading-actions">
+              <button class="button secondary" id="sample-studio">
+                Load sample service</button
+              ><button class="button secondary" id="reset">
+                <span data-icon="refresh"></span>Restart scenario
+              </button>
+            </div>
+          </div>
+          <div class="studio-grid">
+            <section class="panel scenario-panel">
+              <div class="panel-toolbar">
+                <div>
+                  <span class="eyebrow">GUIDED WALKTHROUGH</span>
+                  <h2>The delayed first order</h2>
+                  <p>Table 12 · Terrace · 7 steps</p>
+                </div>
+                <span class="pill purple">Synthetic</span>
+              </div>
+              <ol id="scenario-steps" class="scenario-steps"></ol>
+              <div class="scenario-footer">
+                <span id="scenario-progress"></span
+                ><button id="advance" class="button primary">
+                  Next step<span data-icon="arrow"></span>
+                </button>
+              </div>
+            </section>
+            <div class="studio-side">
+              <section class="panel clock-panel">
+                <div class="panel-toolbar">
+                  <h2>Service clock</h2>
+                  <span data-icon="clock"></span>
+                </div>
+                <div id="clock" class="studio-clock">—</div>
+                <p id="clock-date"></p>
+                <span class="pill neutral">Europe/Tirane · UTC on server</span>
+                <div class="clock-actions">
+                  <button
+                    class="button secondary small"
+                    data-minutes="1"
+                    id="minute"
+                  >
+                    +1 minute</button
+                  ><button class="button secondary small" data-minutes="4">
+                    +4 minutes</button
+                  ><button class="button secondary small" data-minutes="8">
+                    +8 minutes
+                  </button>
+                </div>
+                <p class="micro-copy">
+                  Advance instantly. Restart the scenario to rewind.
+                </p>
+              </section>
+              <section class="panel pos-panel">
+                <div class="panel-toolbar">
+                  <h2>POS simulator</h2>
+                  <span id="pos-pill" class="pill"></span>
+                </div>
+                <p id="pos-status"></p>
+                <button id="pos-connection" class="button secondary full">
+                  Disconnect POS</button
+                ><label class="field-label" for="pos-table"
+                  >Register an order for</label
+                ><select id="pos-table"></select
+                ><button id="pos-record" class="button primary full">
+                  <span data-icon="receipt"></span>Register order
+                </button>
+                <div id="pos-queue"></div>
+                <button id="pos-retry" class="text-button">
+                  Retry last delivered order<span data-icon="refresh"></span>
+                </button>
+                <p class="micro-copy">
+                  Only order registration is confirmed. Waiter arrival is not
+                  measured.
+                </p>
+              </section>
+            </div>
+          </div>
+        </section>
+        <footer class="workspace-footer">
+          <span><i class="tiny-dot"></i>All times in Europe/Tirane</span
+          ><span id="last-updated">Waiting for server</span
+          ><span>TableSignal <span class="version">0.3.1</span></span>
+        </footer>
+      </main>
+    </div>
+    <div class="mobile-navigation" id="mobile-navigation">
+      <a href="#floor" aria-label="Floor overview"
+        ><span data-icon="floor"></span>Floor</a
+      ><a href="#history" aria-label="Visit history"
+        ><span data-icon="history"></span>History</a
+      ><a href="#activity" aria-label="Activity log"
+        ><span data-icon="activity"></span>Activity</a
+      ><a href="#studio" id="mobile-studio" aria-label="Demo studio" hidden
+        ><span data-icon="beaker"></span>Demo</a
+      >
+    </div>
+    <dialog id="action-dialog" aria-labelledby="dialog-title">
+      <form id="action-form">
+        <div class="dialog-header">
+          <div>
+            <div class="eyebrow" id="dialog-eyebrow">NEW VISIT</div>
+            <h2 id="dialog-title">Seat guests</h2>
+          </div>
+          <button
+            type="button"
+            class="icon-button"
+            data-close-dialog
+            aria-label="Close dialog"
+          >
+            <span data-icon="close"></span>
+          </button>
+        </div>
+        <div id="dialog-body" class="dialog-body"></div>
+        <p id="dialog-error" class="inline-error" role="alert" hidden></p>
+        <div class="dialog-footer">
+          <button type="button" class="button secondary" data-close-dialog>
+            Cancel</button
+          ><button type="submit" class="button primary" id="dialog-confirm">
+            Seat guests
+          </button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="info-dialog" aria-labelledby="info-title">
+      <div class="dialog-header">
+        <h2 id="info-title">Help</h2>
+        <button
+          type="button"
+          class="icon-button"
+          id="info-close"
+          aria-label="Close dialog"
+        >
+          <span data-icon="close"></span>
+        </button>
+      </div>
+      <div id="info-body" class="dialog-body"></div>
+    </dialog>
+    <div id="toast" class="toast" role="status" hidden></div>
+    <p id="announce" class="sr-only" role="status"></p>
+    <noscript
+      ><div class="noscript">
+        Enable JavaScript to use the TableSignal workspace.
+      </div></noscript
+    >
+  </body>
+</html>

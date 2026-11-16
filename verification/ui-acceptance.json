@@ -1,0 +1,57 @@
+{
+  "status": "passed",
+  "driver": "Work Browser CUA adapter",
+  "appVersion": "0.3.1",
+  "base": "http://127.0.0.1:8188",
+  "checkedAt": "2026-11-12T11:45:16.434Z",
+  "suiteSha256": "604d324b0cefed2a65f2962dd54192eb0712bc546bcc9a4b816f7f788dc0c59d",
+  "viewports": [
+    {
+      "mode": "narrow",
+      "scrollWidth": 337,
+      "width": 340
+    },
+    {
+      "mode": "wide",
+      "scrollWidth": 1348,
+      "width": 1363
+    }
+  ],
+  "phases": [
+    {
+      "name": "guided-reconciliation",
+      "status": "passed",
+      "durationMs": 4880
+    },
+    {
+      "name": "manual-host-and-order",
+      "status": "passed",
+      "durationMs": 1706
+    },
+    {
+      "name": "history-and-csv",
+      "status": "passed",
+      "durationMs": 479
+    },
+    {
+      "name": "narrow-screen-and-keys",
+      "status": "passed",
+      "durationMs": 3444
+    },
+    {
+      "name": "help-and-preferences",
+      "status": "passed",
+      "durationMs": 1911
+    },
+    {
+      "name": "manual-clock-and-restoration",
+      "status": "passed",
+      "durationMs": 2035
+    },
+    {
+      "name": "manual-fixture-pauses-guided",
+      "status": "passed",
+      "durationMs": 3592
+    }
+  ]
+}
